@@ -18,6 +18,7 @@ class Translator:
         lang_from: str,
         lang_to: str,
         multi_prefix: Optional[str] = None,
+        half_precision: bool = True,
     ):
         """Initialize the Translator. Use :func:`trantran.utils.model_utils.get_all_models` to
         get all available models and language pairs.
@@ -38,10 +39,13 @@ class Translator:
             In the format '>>lng<<' or None. This prefix instructs the model what the destination
             language should be when the destination is multilingual, which can happen when a model
             for the selected language pair is not available.
+        half_precision :
+            Whether to use fp16 to reduce memory usage, default True.
         """
         self.lang_from = lang_from
         self.lang_to = lang_to
         self.multi_prefix = multi_prefix
+        self.half_precision = half_precision
 
         self.device = self._get_device()
         self.BASE_URL = "Helsinki-NLP/opus-mt-"
@@ -104,6 +108,8 @@ class Translator:
         url = f"{base_url}{lang_from}-{lang_to}"
         tokenizer = AutoTokenizer.from_pretrained(url)
         model = AutoModelForSeq2SeqLM.from_pretrained(url).to(self.device)
+        if self.half_precision:
+            model = model.half()
         return tokenizer, model
 
     def _translation_loop(

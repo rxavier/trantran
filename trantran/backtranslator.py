@@ -16,6 +16,7 @@ class BackTranslator:
         lang_to: str,
         to_multi_prefix: Optional[str] = None,
         from_multi_prefix: Optional[str] = None,
+        half_precision: bool = True,
     ):
         """Initialize the BackTranslator. Use :func:`trantran.utils.model_utils.get_all_models` to
         get all available models and language pairs.
@@ -53,12 +54,20 @@ class BackTranslator:
             In the format '>>lng<<' or None. This prefix instructs the model what the destination
             language should be when the source is multilingual, which can happen when a model
             for the selected language pair is not available.
+        half_precision :
+            Whether to use fp16 to reduce memory usage, default True.
         """
         self.translator = Translator(
-            lang_from=lang_from, lang_to=lang_to, multi_prefix=to_multi_prefix
+            lang_from=lang_from,
+            lang_to=lang_to,
+            multi_prefix=to_multi_prefix,
+            half_precision=half_precision,
         )
         self.reverse_translator = Translator(
-            lang_from=lang_to, lang_to=lang_from, multi_prefix=from_multi_prefix
+            lang_from=lang_to,
+            lang_to=lang_from,
+            multi_prefix=from_multi_prefix,
+            half_precision=half_precision,
         )
 
     def backtranslate(
