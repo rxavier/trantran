@@ -48,12 +48,10 @@ class Translator:
         self._from, self._to, self.intermediate = self._validate_model_exists()
 
         if self.intermediate:
-            self.source_tokenizer, self.source_model = self._build(self._from, "en")
-            self.intermediate_to_tokenizer, self.intermediate_to_model = self._build(
-                "en", self._to
-            )
+            self.first_tokenizer, self.first_model = self._build(self._from, "en")
+            self.second_tokenizer, self.second_model = self._build("en", self._to)
         else:
-            self.source_tokenizer, self.source_model = self._build(self._from, self._to)
+            self.tokenizer, self.model = self._build(self._from, self._to)
 
     @staticmethod
     def _get_device() -> torch.device:
@@ -109,7 +107,10 @@ class Translator:
         return tokenizer, model
 
     def _translation_loop(
-        self, texts: Sequence[str], tokenizer: AutoTokenizer, model: AutoModelForSeq2SeqLM
+        self,
+        texts: Sequence[str],
+        tokenizer: AutoTokenizer,
+        model: AutoModelForSeq2SeqLM,
     ) -> Sequence[str]:
         """Tokenize and encode a sequence of texts, translate it and decode back to text."""
         tokens = tokenizer(texts, return_tensors="pt", padding=True).to(self.device)
@@ -134,20 +135,22 @@ class Translator:
     def _intermediate_translate(
         self,
         texts: Sequence[str],
-        source_tokenizer: AutoTokenizer,
-        source_model: AutoModelForSeq2SeqLM,
-        intermediate_to_tokenizer: AutoTokenizer,
-        intermediate_to_model: AutoModelForSeq2SeqLM,
+        first_tokenizer: AutoTokenizer,
+        first_model: AutoModelForSeq2SeqLM,
+        second_tokenizer: AutoTokenizer,
+        second_model: AutoModelForSeq2SeqLM,
     ) -> Sequence[str]:
         """Translate a sequence of texts using intermediate translation with English,
         adding prefix if necessary."""
-        intermediate_translated = self._translation_loop(texts, source_tokenizer, source_model)
+        intermediate_translated = self._translation_loop(
+            texts, first_tokenizer, first_model
+        )
         if self._to == "mul":
             intermediate_translated = [
                 f"{self.multi_prefix} {text}" for text in intermediate_translated
             ]
         translated = self._translation_loop(
-            intermediate_translated, intermediate_to_tokenizer, intermediate_to_model
+            intermediate_translated, second_tokenizer, second_model
         )
         return translated
 
@@ -167,10 +170,10 @@ class Translator:
         if self.intermediate:
             return self._intermediate_translate(
                 texts,
-                self.source_tokenizer,
-                self.source_model,
-                self.intermediate_to_tokenizer,
-                self.intermediate_to_model,
+                self.first_tokenizer,
+                self.first_model,
+                self.second_tokenizer,
+                self.second_model,
             )
         else:
-            return self._translate(texts, self.source_tokenizer, self.source_model)
+            return self._translate(texts, self.tokenizer, self.model)
