@@ -120,7 +120,7 @@ class Translator:
     ) -> Sequence[str]:
         """Tokenize and encode a sequence of texts, translate it and decode back to text."""
         tokens = tokenizer(texts, return_tensors="pt", padding=True).to(self.device)
-        translated_generated = model.generate(**tokens)
+        translated_generated = model.generate(**tokens).to(self.device)
         translated = [
             tokenizer.decode(t, skip_special_tokens=True) for t in translated_generated
         ]
