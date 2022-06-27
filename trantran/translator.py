@@ -119,8 +119,10 @@ class Translator:
         model: AutoModelForSeq2SeqLM,
     ) -> Sequence[str]:
         """Tokenize and encode a sequence of texts, translate it and decode back to text."""
-        tokens = tokenizer(texts, return_tensors="pt", padding=True).to(self.device)
-        translated_generated = model.generate(**tokens).to(self.device)
+        tokens = tokenizer(texts, return_tensors="pt", padding=True, max_length=512).to(
+            self.device
+        )
+        translated_generated = model.generate(**tokens)
         translated = [
             tokenizer.decode(t, skip_special_tokens=True) for t in translated_generated
         ]
@@ -136,6 +138,8 @@ class Translator:
         if self._to == "mul":
             texts = [f"{self.multi_prefix} {text}" for text in texts]
         translated = self._translation_loop(texts, tokenizer, model)
+        if self.device.cuda.type == "cuda":
+            torch.cuda.empty_cache()
         return translated
 
     def _intermediate_translate(
@@ -158,6 +162,8 @@ class Translator:
         translated = self._translation_loop(
             intermediate_translated, second_tokenizer, second_model
         )
+        if self.device.cuda.type == "cuda":
+            torch.cuda.empty_cache()
         return translated
 
     def translate(self, texts: Sequence[str]) -> Sequence[str]:
