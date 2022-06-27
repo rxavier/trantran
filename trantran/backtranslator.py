@@ -61,7 +61,9 @@ class BackTranslator:
             lang_from=lang_to, lang_to=lang_from, multi_prefix=from_multi_prefix
         )
 
-    def backtranslate(self, texts: Sequence[str]) -> Sequence[str]:
+    def backtranslate(
+        self, texts: Sequence[str], return_intermediate: bool = False
+    ) -> Sequence[str]:
         """Translate a sequence of strings from source to destination language and back.
 
         Parameters
@@ -76,4 +78,7 @@ class BackTranslator:
             language and back.
         """
         translated = self.translator.translate(texts)
-        return self.reverse_translator.translate(translated)
+        backtranslated = self.reverse_translator.translate(translated)
+        if return_intermediate:
+            return backtranslated, translated
+        return backtranslated
