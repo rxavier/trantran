@@ -119,9 +119,9 @@ class Translator:
         model: AutoModelForSeq2SeqLM,
     ) -> Sequence[str]:
         """Tokenize and encode a sequence of texts, translate it and decode back to text."""
-        tokens = tokenizer(texts, return_tensors="pt", padding=True, max_length=512).to(
-            self.device
-        )
+        tokens = tokenizer(
+            texts, return_tensors="pt", padding=True, max_length=512, truncation=True
+        ).to(self.device)
         translated_generated = model.generate(**tokens)
         translated = [
             tokenizer.decode(t, skip_special_tokens=True) for t in translated_generated
