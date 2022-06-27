@@ -4,7 +4,9 @@ from huggingface_hub import HfApi
 
 
 def get_all_models(
-    lang_from: Optional[str] = None, lang_to: Optional[str] = None, only_ids: bool = True
+    lang_from: Optional[str] = None,
+    lang_to: Optional[str] = None,
+    only_ids: bool = True,
 ):
     """Search for a Helsinki NLP Opus MT model matching the language pair in the HuggingFace hub.
 
@@ -24,7 +26,8 @@ def get_all_models(
         matches = [
             match
             for match in matches
-            if match.id.split("-")[-2] == lang_from and match.id.split("-")[-1] == lang_to
+            if match.id.split("-")[-2] == lang_from
+            and match.id.split("-")[-1] == lang_to
         ]
     elif lang_from and not lang_to:
         matches = [match for match in matches if match.id.split("-")[-2] == lang_from]
