@@ -17,7 +17,7 @@ classifiers = ["Development Status :: 3 - Alpha", "Intended Audience :: End User
                "Topic :: Text Processing", "Topic :: Text Processing :: Linguistic"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 transformers = "^4.20.1"
 sacremoses = "^0.0.53"
 torch = "^1.11.0"
