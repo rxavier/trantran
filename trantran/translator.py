@@ -138,7 +138,7 @@ class Translator:
         if self._to == "mul":
             texts = [f"{self.multi_prefix} {text}" for text in texts]
         translated = self._translation_loop(texts, tokenizer, model)
-        if self.device.cuda.type == "cuda":
+        if self.device.type == "cuda":
             torch.cuda.empty_cache()
         return translated
 
@@ -162,7 +162,7 @@ class Translator:
         translated = self._translation_loop(
             intermediate_translated, second_tokenizer, second_model
         )
-        if self.device.cuda.type == "cuda":
+        if self.device.type == "cuda":
             torch.cuda.empty_cache()
         return translated
 
