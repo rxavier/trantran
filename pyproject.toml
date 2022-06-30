@@ -4,33 +4,17 @@ version = "0.1.0"
 description = "A language TRANslator based on TRANsformer neural networks."
 authors = ["Rafael Xavier <rxaviermontero@gmail.com>"]
 license = "MIT"
-readme = "README.md"
-homepage = ""
-repository = "https://github.com/rxavier/trantran"
-documentation = ""
-keywords = ["translation","huggingface", "transformers", "deep learning",
-            "neural networks", "Helsinki NLP", "NLP", "natural language processing"]
-classifiers = ["Development Status :: 3 - Alpha", "Intended Audience :: End Users/Desktop",
-               "Intended Audience :: Science/Research", "Intended Audience :: Developers",
-               "License :: OSI Approved :: MIT License", "Programming Language :: Python :: 3.8",
-               "Topic :: Scientific/Engineering :: Artificial Intelligence",
-               "Topic :: Text Processing", "Topic :: Text Processing :: Linguistic"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
 transformers = "^4.20.1"
-sacremoses = "^0.0.53"
-torch = "^1.11.0"
-torchtext = "^0.12.0"
+torch = "^1.12.0"
 sentencepiece = "^0.1.96"
+sacremoses = "^0.0.53"
 
 [tool.poetry.dev-dependencies]
-black = "^22.3.0"
-jupyter = "^1.0.0"
+ipykernel = "^6.15.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 88
