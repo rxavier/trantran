@@ -45,9 +45,13 @@ class Translator:
         self.lang_from = lang_from
         self.lang_to = lang_to
         self.multi_prefix = multi_prefix
-        self.half_precision = half_precision
 
         self.device = self._get_device()
+        if self.device.type != "cuda":
+            self.half_precision = False
+        else:
+            self.half_precision = half_precision
+
         self.BASE_URL = "Helsinki-NLP/opus-mt-"
         self._from, self._to, self.intermediate = self._validate_model_exists()
 
@@ -63,6 +67,8 @@ class Translator:
         try:
             if torch.backends.mps.is_available() is True:
                 device = "mps"
+            else:
+                device = "cuda" if torch.cuda.is_available() else "cpu"
         except AttributeError:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         return torch.device(device)
